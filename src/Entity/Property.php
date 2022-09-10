@@ -2,13 +2,41 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\PropertyRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
+#[ApiResource(
+    normalizationContext: ['groups' => ['read:Property', 'timestampable']],
+    attributes: ['order' => ['price' => 'DESC']],
+    collectionOperations: [
+        'get',
+        'post'
+    ],
+    itemOperations: [
+        'get' => ['security' => "is_granted('ROLE_USER')"],
+        'put' => ['security' => "is_granted('ROLE_USER')"],
+        'delete' => ['security' => "is_granted('ROLE_USER')"]
+    ]
+)]
+#[ApiFilter(filterClass: SearchFilter::class, properties: [
+    'city' => 'partial',
+    'street' => 'partial',
+    'name' => 'partial',
+    'owner.name' => 'ipartial'
+])]
+#[ApiFilter(filterClass: OrderFilter::class, properties: ['city', 'name', 'price'])]
 #[ORM\Entity(repositoryClass: PropertyRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Property
 {
+    use Timestamps;
+
     final public const STATUS_ACTIVE = 'ACTIVE';
     final public const STATUS_DELETED = 'DELETED';
     final public const STATUS_RENTED = 'RENTED';
@@ -16,38 +44,42 @@ class Property
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    #[Groups(groups: ['read:Property', 'read:User'])]
+    private ?int $id;
 
     #[ORM\Column(length: 255)]
-    private ?string $name = null;
+    #[Groups(groups: ['read:Property', 'write:Property', 'update:Property', 'read:User'])]
+    private ?string $name;
+
 
     #[ORM\Column(length: 255)]
-    private ?string $city = null;
+    #[Groups(groups: ['read:Property', 'write:Property', 'update:Property', 'read:User'])]
+    private ?string $city;
 
     #[ORM\Column(length: 255)]
-    private ?string $street = null;
+    #[Groups(groups: ['read:Property', 'write:Property', 'update:Property', 'read:User'])]
+    private ?string $street;
 
     #[ORM\Column]
-    private ?float $price = null;
+    #[Groups(groups: ['read:Property', 'write:Property', 'update:Property', 'read:User'])]
+    private ?float $price;
 
     #[ORM\Column(type: Types::SMALLINT)]
-    private ?int $numberOfRooms = null;
+    #[Groups(groups: ['read:Property', 'write:Property', 'update:Property', 'read:User'])]
+    private ?int $numberOfRooms;
 
     #[ORM\Column(length: 255)]
-    private ?string $status = null;
+    #[Groups(groups: ['read:Property', 'write:Property', 'update:Property', 'read:User'])]
+    private ?string $status;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $createdAt = null;
-
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $updatedAt = null;
-
-    #[ORM\Column(type: Types::TEXT)]
-    private ?string $description = null;
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(groups: ['read:Property', 'write:Property', 'update:Property', 'read:User'])]
+    private ?string $description;
 
     #[ORM\ManyToOne(inversedBy: 'properties')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $owner = null;
+    #[Groups(groups: ['read:Property', 'write:Property', 'update:Property'])]
+    private ?User $owner;
 
     public function getId(): ?int
     {
@@ -122,30 +154,6 @@ class Property
     public function setStatus(string $status): self
     {
         $this->status = $status;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeInterface
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTimeInterface
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(\DateTimeInterface $updatedAt): self
-    {
-        $this->updatedAt = $updatedAt;
 
         return $this;
     }
