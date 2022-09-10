@@ -51,7 +51,7 @@ class PropertyRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function getChosenPropertiesCreatedByAdmins()
+    public function getChosenPropertyNamesCreatedByAdmins()
     {
         $qb = $this->createQueryBuilder('p');
         $qb->join("p.creator", "c");
