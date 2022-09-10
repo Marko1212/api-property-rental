@@ -22,9 +22,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
         'post',
     ],
     itemOperations: [
-        'get' => ['security' => 'is_granted("view", object)'],
+        'get',
         'put',
-        'delete' => ['security' => 'is_granted("remove", object)']
+        'delete'
     ]
 )]
 #[ApiFilter(filterClass: SearchFilter::class, properties: [

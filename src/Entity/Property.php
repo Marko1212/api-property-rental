@@ -19,9 +19,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
         'post'
     ],
     itemOperations: [
-        'get' => ['security' => "is_granted('ROLE_USER')"],
-        'put' => ['security' => "is_granted('ROLE_USER')"],
-        'delete' => ['security' => "is_granted('ROLE_USER')"]
+        'get',
+        'put',
+        'delete',
     ],
     subresourceOperations: ['api_users_properties_get_subresource' => ['normalization_context' => ['groups' => ['properties_subresource']]]]
 )]
