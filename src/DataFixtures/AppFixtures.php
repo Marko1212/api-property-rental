@@ -42,7 +42,7 @@ class AppFixtures extends Fixture
                     ->setNumberOfRooms($faker->numberBetween(1, 15))
                     ->setDescription($faker->text(500))
                     ->setStatus($faker->randomElement(['ACTIVE', 'DELETED', 'RENTED']))
-                    ->setOwner($user);
+                    ->setCreator($user);
                 $manager->persist($property);
             }
         }

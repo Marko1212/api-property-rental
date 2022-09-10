@@ -20,7 +20,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
     normalizationContext: ['groups' => ['read:User', 'timestampable']],
     collectionOperations: [
         'get',
-        'post',
+       // 'post',
     ],
     itemOperations: [
         'get',
@@ -30,11 +30,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
 )]
 #[ApiFilter(filterClass: SearchFilter::class, properties: [
     'email' => 'ipartial',
+    'name' => 'ipartial',
 ])]
 #[ApiFilter(filterClass: OrderFilter::class, properties: ['email'])]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[UniqueEntity('email', groups: ['write:User', 'update:User'])]
+#[UniqueEntity('email', message: "Un utilisateur ayant cette adresse email existe déjà")]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     use Timestamps;
@@ -68,7 +69,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(groups: ['read:User', 'update:User', 'read:Property'])]
     private ?string $name;
 
-    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Property::class)]
+    #[ORM\OneToMany(mappedBy: 'creator', targetEntity: Property::class)]
     #[Groups(groups: ['read:User', 'update:User'])]
     #[ApiSubresource]
     private Collection $properties;
@@ -160,7 +161,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->properties->contains($property)) {
             $this->properties->add($property);
-            $property->setOwner($this);
+            $property->setCreator($this);
         }
 
         return $this;
@@ -170,8 +171,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->properties->removeElement($property)) {
             // set the owning side to null (unless already changed)
-            if ($property->getOwner() === $this) {
-                $property->setOwner(null);
+            if ($property->getCreator() === $this) {
+                $property->setCreator(null);
             }
         }
 

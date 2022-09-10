@@ -39,28 +39,55 @@ class PropertyRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Property[] Returns an array of Property objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('p.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function getChosenPropertiesCreatedByManagers()
+    {
+        $qb = $this->createQueryBuilder('p');
+        $qb->join("p.creator", "c");
+        return $qb->andWhere("LOWER(p.status) = 'rented'")
+            ->andWhere("LOWER(p.city) = 'zurich'")
+            ->andWhere("p.numberOfRooms BETWEEN 3 and 5")
+            ->andWhere("c.roles LIKE '%ROLE_MANAGER%'")
+            ->getQuery()
+            ->getResult();
+    }
 
-//    public function findOneBySomeField($value): ?Property
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function getChosenPropertiesCreatedByAdmins()
+    {
+        $qb = $this->createQueryBuilder('p');
+        $qb->join("p.creator", "c");
+        return $qb->select('p.name')->andWhere("LOWER(p.status) = 'active'")
+            ->andWhere("LOWER(p.city) = 'zurich'")
+            ->andWhere("p.numberOfRooms BETWEEN 3 and 5")
+            ->andWhere("c.roles LIKE '%ROLE_ADMIN%'")
+            ->getQuery()
+            ->getResult();
+    }
+
+
+    /*   select property.* from property inner join user on property.creator_id = user.id where property.status = 'rented' and property.city='zurich' and property.number_of_rooms between 3 and 5 and user.roles LIKE '%ROLE_MANAGER%'; */
+
+    //    /**
+    //     * @return Property[] Returns an array of Property objects
+    //     */
+    //    public function findByExampleField($value): array
+    //    {
+    //        return $this->createQueryBuilder('p')
+    //            ->andWhere('p.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->orderBy('p.id', 'ASC')
+    //            ->setMaxResults(10)
+    //            ->getQuery()
+    //            ->getResult()
+    //        ;
+    //    }
+
+    //    public function findOneBySomeField($value): ?Property
+    //    {
+    //        return $this->createQueryBuilder('p')
+    //            ->andWhere('p.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->getQuery()
+    //            ->getOneOrNullResult()
+    //        ;
+    //    }
 }

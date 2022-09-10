@@ -17,25 +17,26 @@ use Symfony\Component\Serializer\Annotation\Groups;
     attributes: ['order' => ['price' => 'DESC']],
     collectionOperations: [
         'get',
-        'post'
+        'post' => ['security_post_denormalize' => 'is_granted("create", object)'],
     ],
     itemOperations: [
-        'get',
-        'put',
-        'delete',
+        'get' => ['security' => 'is_granted("view", object)'],
+        'put' => ['security_post_denormalize' => 'is_granted("edit", object) and is_granted("edit", previous_object)'],
+        'delete' => ['security' => 'is_granted("remove", object)'],
     ],
     subresourceOperations: ['api_users_properties_get_subresource' => ['normalization_context' => ['groups' => ['properties_subresource']]]]
 )]
 #[ApiFilter(filterClass: SearchFilter::class, properties: [
-    'city' => 'partial',
-    'street' => 'partial',
-    'name' => 'partial',
-    'owner.name' => 'ipartial'
+    'city' => 'ipartial',
+    'street' => 'ipartial',
+    'name' => 'ipartial',
+    'status' => 'iexact',
+    'creator.name' => 'ipartial'
 ])]
 #[ApiFilter(filterClass: OrderFilter::class, properties: ['city', 'name', 'price'])]
 #[ORM\Entity(repositoryClass: PropertyRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[UniqueEntity('name', groups: ['write:Property', 'update:Property'])]
+#[UniqueEntity('name', message : "Une propriété ayant ce nom existe déjà")]
 class Property
 {
     use Timestamps;
@@ -81,7 +82,7 @@ class Property
     #[ORM\ManyToOne(inversedBy: 'properties')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(groups: ['read:Property', 'write:Property', 'update:Property'])]
-    private ?User $owner;
+    private ?User $creator;
 
     public function getId(): ?int
     {
@@ -172,14 +173,14 @@ class Property
         return $this;
     }
 
-    public function getOwner(): ?User
+    public function getCreator(): ?User
     {
-        return $this->owner;
+        return $this->creator;
     }
 
-    public function setOwner(?User $owner): self
+    public function setCreator(?User $creator): self
     {
-        $this->owner = $owner;
+        $this->creator = $creator;
 
         return $this;
     }
