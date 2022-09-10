@@ -9,6 +9,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\PropertyRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(
@@ -34,6 +35,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiFilter(filterClass: OrderFilter::class, properties: ['city', 'name', 'price'])]
 #[ORM\Entity(repositoryClass: PropertyRepository::class)]
 #[ORM\HasLifecycleCallbacks]
+#[UniqueEntity('name', groups: ['write:Property', 'update:Property'])]
 class Property
 {
     use Timestamps;
@@ -48,7 +50,7 @@ class Property
     #[Groups(groups: ['read:Property', 'read:User', 'properties_subresource'])]
     private ?int $id;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     #[Groups(groups: ['read:Property', 'write:Property', 'update:Property', 'read:User', 'properties_subresource'])]
     private ?string $name;
 
