@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\UserRepository;
@@ -18,7 +19,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
     normalizationContext: ['groups' => ['read:User', 'timestampable']],
     collectionOperations: [
         'get',
-        'post' => ['security_post_denormalize' => 'is_granted("create", object)']
+        'post',
     ],
     itemOperations: [
         'get' => ['security' => 'is_granted("view", object)'],
@@ -67,6 +68,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Property::class)]
     #[Groups(groups: ['read:User', 'update:User'])]
+    #[ApiSubresource]
     private Collection $properties;
 
     public function __construct()

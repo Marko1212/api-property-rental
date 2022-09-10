@@ -22,7 +22,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
         'get' => ['security' => "is_granted('ROLE_USER')"],
         'put' => ['security' => "is_granted('ROLE_USER')"],
         'delete' => ['security' => "is_granted('ROLE_USER')"]
-    ]
+    ],
+    subresourceOperations: ['api_users_properties_get_subresource' => ['normalization_context' => ['groups' => ['properties_subresource']]]]
 )]
 #[ApiFilter(filterClass: SearchFilter::class, properties: [
     'city' => 'partial',
@@ -44,36 +45,35 @@ class Property
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(groups: ['read:Property', 'read:User'])]
+    #[Groups(groups: ['read:Property', 'read:User', 'properties_subresource'])]
     private ?int $id;
 
     #[ORM\Column(length: 255)]
-    #[Groups(groups: ['read:Property', 'write:Property', 'update:Property', 'read:User'])]
+    #[Groups(groups: ['read:Property', 'write:Property', 'update:Property', 'read:User', 'properties_subresource'])]
     private ?string $name;
 
-
     #[ORM\Column(length: 255)]
-    #[Groups(groups: ['read:Property', 'write:Property', 'update:Property', 'read:User'])]
+    #[Groups(groups: ['read:Property', 'write:Property', 'update:Property', 'read:User', 'properties_subresource'])]
     private ?string $city;
 
     #[ORM\Column(length: 255)]
-    #[Groups(groups: ['read:Property', 'write:Property', 'update:Property', 'read:User'])]
+    #[Groups(groups: ['read:Property', 'write:Property', 'update:Property', 'read:User', 'properties_subresource'])]
     private ?string $street;
 
     #[ORM\Column]
-    #[Groups(groups: ['read:Property', 'write:Property', 'update:Property', 'read:User'])]
+    #[Groups(groups: ['read:Property', 'write:Property', 'update:Property', 'read:User', 'properties_subresource'])]
     private ?float $price;
 
     #[ORM\Column(type: Types::SMALLINT)]
-    #[Groups(groups: ['read:Property', 'write:Property', 'update:Property', 'read:User'])]
+    #[Groups(groups: ['read:Property', 'write:Property', 'update:Property', 'read:User', 'properties_subresource'])]
     private ?int $numberOfRooms;
 
     #[ORM\Column(length: 255)]
-    #[Groups(groups: ['read:Property', 'write:Property', 'update:Property', 'read:User'])]
+    #[Groups(groups: ['read:Property', 'write:Property', 'update:Property', 'read:User', 'properties_subresource'])]
     private ?string $status;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(groups: ['read:Property', 'write:Property', 'update:Property', 'read:User'])]
+    #[Groups(groups: ['read:Property', 'write:Property', 'update:Property', 'read:User', 'properties_subresource'])]
     private ?string $description;
 
     #[ORM\ManyToOne(inversedBy: 'properties')]
