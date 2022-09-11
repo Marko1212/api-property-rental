@@ -54,8 +54,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180, unique: true)]
     #[Groups(groups: ['read:User', 'read:Property'])]
-    #[Assert\NotBlank(normalizer: 'trim', message: "L'adresse email de l'utilisateur est obligatoire")]
-    #[Assert\Email(message: "Le format de l'adresse email doit être valide")]
+    #[Assert\NotBlank(normalizer: 'trim', message: "L'email de l'utilisateur doit être renseigné")]
+    #[Assert\Email(message: "L'adresse email doit avoir un format valide")]
     private ?string $email;
 
     #[ORM\Column]
