@@ -94,7 +94,6 @@ class Property
     #[ORM\ManyToOne(inversedBy: 'properties')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(groups: ['read:Property'])]
-    #[Assert\NotBlank(normalizer: 'trim')]
     #[Assert\Valid]
     private ?User $creator;
 
