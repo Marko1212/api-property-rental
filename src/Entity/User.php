@@ -21,12 +21,12 @@ use Symfony\Component\Validator\Constraints as Assert;
     normalizationContext: ['groups' => ['read:User', 'timestampable']],
     collectionOperations: [
         'get',
-        // 'post',
+        'post',
     ],
     itemOperations: [
         'get',
-        'put',
-        'delete'
+        // 'put',
+        'delete' => ['security' => 'is_granted("remove", object)']
     ]
 )]
 #[ApiFilter(filterClass: SearchFilter::class, properties: [
