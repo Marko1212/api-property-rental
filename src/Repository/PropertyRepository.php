@@ -59,17 +59,14 @@ class PropertyRepository extends ServiceEntityRepository
 
         $qb->select('p.name')->andWhere("LOWER(p.status) = 'active'")
             ->andWhere("LOWER(p.city) = 'zurich'")
-            ->andWhere("c.roles LIKE '%ROLE_ADMIN%'");
+            ->andWhere("c.roles LIKE '%ROLE_ADMIN%'")
+            ->andWhere("t.locale IN ('de', 'en')");
 
-        return $qb->add('where', $qb->expr()->in('t.locale', ['de', 'en']))
-            ->groupBy('p.name')
+        return $qb->groupBy('p.name')
             ->having('COUNT(p.id) = 2')
             ->getQuery()
             ->getResult();
     }
-
-
-    /*   select property.* from property inner join user on property.creator_id = user.id where property.status = 'rented' and property.city='zurich' and property.number_of_rooms between 3 and 5 and user.roles LIKE '%ROLE_MANAGER%'; */
 
     //    /**
     //     * @return Property[] Returns an array of Property objects

@@ -27,7 +27,7 @@ class PropertyRepositoryTest extends KernelTestCase
             ->getRepository(Property::class)
             ->getChosenPropertiesCreatedByManagers();
 
-        $this->assertSame([], $properties);
+        $this->assertSame(array($this->entityManager->getRepository(Property::class)->find(212)), $properties);
     }
 
     public function testGetChosenPropertyNamesCreatedByAdmins()
