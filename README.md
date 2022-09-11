@@ -44,7 +44,7 @@ Fixtures pour la base de données de test:
 symfony console --env=test doctrine:fixtures:load --no-interaction
 ```
 
-Pour exécuter les tests avec phpunit: 
+Exécuter les tests avec phpunit: 
 
 ```bash
 php bin/phpunit
