@@ -54,11 +54,16 @@ class PropertyRepository extends ServiceEntityRepository
     public function getChosenPropertyNamesCreatedByAdmins()
     {
         $qb = $this->createQueryBuilder('p');
-        $qb->join("p.creator", "c");
-        return $qb->select('p.name')->andWhere("LOWER(p.status) = 'active'")
+        $qb->join('p.creator', 'c');
+        $qb->join('p.translations', 't');
+
+        $qb->select('p.name')->andWhere("LOWER(p.status) = 'active'")
             ->andWhere("LOWER(p.city) = 'zurich'")
-            ->andWhere("p.numberOfRooms BETWEEN 3 and 5")
-            ->andWhere("c.roles LIKE '%ROLE_ADMIN%'")
+            ->andWhere("c.roles LIKE '%ROLE_ADMIN%'");
+
+        return $qb->add('where', $qb->expr()->in('t.locale', ['de', 'en']))
+            ->groupBy('p.name')
+            ->having('COUNT(p.id) = 2')
             ->getQuery()
             ->getResult();
     }
