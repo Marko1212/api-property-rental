@@ -25,7 +25,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
     itemOperations: [
         'get',
-        // 'put',
+        'put',
         'delete' => ['security' => 'is_granted("remove", object)']
     ]
 )]
