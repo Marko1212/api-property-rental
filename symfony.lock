@@ -73,6 +73,9 @@
             "./config/packages/lexik_jwt_authentication.yaml"
         ]
     },
+    "locastic/api-platform-translation-bundle": {
+        "version": "v1.3.4"
+    },
     "nelmio/cors-bundle": {
         "version": "2.2",
         "recipe": {

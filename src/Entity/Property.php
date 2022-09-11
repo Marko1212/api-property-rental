@@ -9,20 +9,22 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\PropertyRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Locastic\ApiPlatformTranslationBundle\Model\AbstractTranslatable;
+use Locastic\ApiPlatformTranslationBundle\Model\TranslationInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
     normalizationContext: ['groups' => ['read:Property', 'timestampable']],
-    attributes: ['order' => ['price' => 'DESC']],
+    attributes: ['order' => ['price' => 'DESC'], 'filters' => ['translation.groups']],
     collectionOperations: [
         'get',
-        'post' => ['security_post_denormalize' => 'is_granted("create", object)'],
+        'post' => ['security_post_denormalize' => 'is_granted("create", object)', 'normalization_context' => ['groups' => ['translations']]],
     ],
     itemOperations: [
         'get' => ['security' => 'is_granted("view", object)'],
-        'put' => ['security_post_denormalize' => 'is_granted("edit", object) and is_granted("edit", previous_object)'],
+        'put' => ['security_post_denormalize' => 'is_granted("edit", object) and is_granted("edit", previous_object)', 'normalization_context' => ['groups' => ['translations']]],
         'delete' => ['security' => 'is_granted("remove", object)'],
     ],
     subresourceOperations: ['api_users_properties_get_subresource' => ['normalization_context' => ['groups' => ['properties_subresource']]]]
@@ -38,7 +40,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: PropertyRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[UniqueEntity('name', message: "Une propriété ayant ce nom existe déjà")]
-class Property
+class Property extends AbstractTranslatable
 {
     use Timestamps;
 
@@ -90,6 +92,10 @@ class Property
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     #[Groups(groups: ['read:Property', 'read:User', 'properties_subresource'])]
     private ?string $description;
+
+    #[ORM\OneToMany(targetEntity: 'PropertyTranslation', mappedBy: 'translatable', fetch: 'EXTRA_LAZY', indexBy: 'locale', cascade: ['PERSIST'], orphanRemoval: true)]
+    #[Groups(groups: ['translations'])]
+    protected $translations;
 
     #[ORM\ManyToOne(inversedBy: 'properties')]
     #[ORM\JoinColumn(nullable: false)]
@@ -174,18 +180,6 @@ class Property
         return $this;
     }
 
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
-
-    public function setDescription(string $description): self
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
     public function getCreator(): ?User
     {
         return $this->creator;
@@ -196,5 +190,23 @@ class Property
         $this->creator = $creator;
 
         return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        //   return $this->description;
+        return $this->getTranslation()->getDescription();
+    }
+
+    public function setDescription(string $description): self
+    {
+        // $this->description = $description;
+        $this->getTranslation()->setDescription($description);
+        return $this;
+    }
+
+    protected function createTranslation(): TranslationInterface
+    {
+        return new PropertyTranslation();
     }
 }
