@@ -11,6 +11,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
     normalizationContext: ['groups' => ['read:Property', 'timestampable']],
@@ -36,7 +37,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiFilter(filterClass: OrderFilter::class, properties: ['city', 'name', 'price'])]
 #[ORM\Entity(repositoryClass: PropertyRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[UniqueEntity('name', message : "Une propriété ayant ce nom existe déjà")]
+#[UniqueEntity('name', message: "Une propriété ayant ce nom existe déjà")]
 class Property
 {
     use Timestamps;
@@ -52,36 +53,49 @@ class Property
     private ?int $id;
 
     #[ORM\Column(length: 255, unique: true)]
-    #[Groups(groups: ['read:Property', 'write:Property', 'update:Property', 'read:User', 'properties_subresource'])]
+    #[Groups(groups: ['read:Property', 'read:User', 'properties_subresource'])]
+    #[Assert\NotBlank(normalizer: 'trim', message: "Le nom de la propriété est obligatoire")]
     private ?string $name;
 
     #[ORM\Column(length: 255)]
-    #[Groups(groups: ['read:Property', 'write:Property', 'update:Property', 'read:User', 'properties_subresource'])]
+    #[Groups(groups: ['read:Property', 'read:User', 'properties_subresource'])]
+    #[Assert\NotBlank(normalizer: 'trim', message: "Le nom de la ville est obligatoire")]
     private ?string $city;
 
     #[ORM\Column(length: 255)]
-    #[Groups(groups: ['read:Property', 'write:Property', 'update:Property', 'read:User', 'properties_subresource'])]
+    #[Groups(groups: ['read:Property', 'read:User', 'properties_subresource'])]
+    #[Assert\NotBlank(normalizer: 'trim', message: "Le nom de la rue est obligatoire")]
     private ?string $street;
 
     #[ORM\Column]
-    #[Groups(groups: ['read:Property', 'write:Property', 'update:Property', 'read:User', 'properties_subresource'])]
+    #[Groups(groups: ['read:Property', 'read:User', 'properties_subresource'])]
+    #[Assert\NotBlank(normalizer: 'trim', message: "Le prix est obligatoire")]
+    #[Assert\Type(type: 'numeric')]
+    #[Assert\Positive]
     private ?float $price;
 
     #[ORM\Column(type: Types::SMALLINT)]
-    #[Groups(groups: ['read:Property', 'write:Property', 'update:Property', 'read:User', 'properties_subresource'])]
+    #[Groups(groups: ['read:Property', 'read:User', 'properties_subresource'])]
+    #[Assert\NotBlank(normalizer: 'trim', message: "Le nombre de chambres est obligatoire")]
+    #[Assert\Type(type: 'integer')]
+    #[Assert\Positive]
     private ?int $numberOfRooms;
 
     #[ORM\Column(length: 255)]
-    #[Groups(groups: ['read:Property', 'write:Property', 'update:Property', 'read:User', 'properties_subresource'])]
+    #[Groups(groups: ['read:Property', 'read:User', 'properties_subresource'])]
+    #[Assert\NotBlank(normalizer: 'trim', message: "Le statut de la propriété est obligatoire")]
+    #[Assert\Choice(choices: ["ACTIVE", "DELETED", "RENTED", "active", "deleted", "rented"], message: "Le statut doit être ACTIVE, DELETED ou RENTED")]
     private ?string $status;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(groups: ['read:Property', 'write:Property', 'update:Property', 'read:User', 'properties_subresource'])]
+    #[Groups(groups: ['read:Property', 'read:User', 'properties_subresource'])]
     private ?string $description;
 
     #[ORM\ManyToOne(inversedBy: 'properties')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(groups: ['read:Property', 'write:Property', 'update:Property'])]
+    #[Groups(groups: ['read:Property'])]
+    #[Assert\NotBlank(normalizer: 'trim')]
+    #[Assert\Valid]
     private ?User $creator;
 
     public function getId(): ?int

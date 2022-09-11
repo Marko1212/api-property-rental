@@ -15,12 +15,13 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
     normalizationContext: ['groups' => ['read:User', 'timestampable']],
     collectionOperations: [
         'get',
-       // 'post',
+        // 'post',
     ],
     itemOperations: [
         'get',
@@ -52,25 +53,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id;
 
     #[ORM\Column(length: 180, unique: true)]
-    #[Groups(groups: ['read:User', 'update:User', 'read:Property'])]
+    #[Groups(groups: ['read:User', 'read:Property'])]
+    #[Assert\NotBlank(normalizer: 'trim', message: "L'adresse email de l'utilisateur est obligatoire")]
+    #[Assert\Email(message: "Le format de l'adresse email doit être valide")]
     private ?string $email;
 
     #[ORM\Column]
-    #[Groups(groups: ['read:User', 'update:User', 'read:Property'])]
+    #[Groups(groups: ['read:User', 'read:Property'])]
     private array $roles = [];
 
     /**
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[Assert\NotBlank(normalizer: 'trim', message: "Le mot de passe est obligatoire")]
     private ?string $password;
 
     #[ORM\Column(length: 255)]
-    #[Groups(groups: ['read:User', 'update:User', 'read:Property'])]
+    #[Groups(groups: ['read:User', 'read:Property'])]
+    #[Assert\NotBlank(normalizer: 'trim', message: "Le nom de l'utilisateur est obligatoire")]
     private ?string $name;
 
-    #[ORM\OneToMany(mappedBy: 'creator', targetEntity: Property::class)]
-    #[Groups(groups: ['read:User', 'update:User'])]
+    #[ORM\OneToMany(mappedBy: 'creator', targetEntity: Property::class, orphanRemoval: true)]
+    #[Groups(groups: ['read:User'])]
     #[ApiSubresource]
     private Collection $properties;
 
