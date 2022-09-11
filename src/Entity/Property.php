@@ -7,6 +7,8 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Repository\PropertyRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Locastic\ApiPlatformTranslationBundle\Model\AbstractTranslatable;
@@ -102,6 +104,15 @@ class Property extends AbstractTranslatable
     #[Groups(groups: ['read:Property'])]
     #[Assert\Valid]
     private ?User $creator;
+
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'propertiesToRead')]
+    #[Groups(groups: ['read:Property'])]
+    private $authorizedUsers;
+
+    public function __construct()
+    {
+        $this->authorizedUsers = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -208,5 +219,32 @@ class Property extends AbstractTranslatable
     protected function createTranslation(): TranslationInterface
     {
         return new PropertyTranslation();
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getAuthorizedUsers(): Collection
+    {
+        return $this->authorizedUsers;
+    }
+
+    public function addAuthorizedUser(User $user): self
+    {
+        if (!$this->authorizedUsers->contains($user)) {
+            $this->authorizedUsers[] = $user;
+            $user->addPropertyToRead($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAuthorizedUser(User $user): self
+    {
+        if ($this->authorizedUsers->removeElement($user)) {
+            $user->removePropertyToRead($this);
+        }
+
+        return $this;
     }
 }

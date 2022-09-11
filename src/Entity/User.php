@@ -79,9 +79,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ApiSubresource]
     private Collection $properties;
 
+    #[ORM\ManyToMany(inversedBy: 'authorizedUsers', targetEntity: Property::class)]
+    #[Groups(groups: ['read:User'])]
+    private $propertiesToRead;
+
     public function __construct()
     {
         $this->properties = new ArrayCollection();
+        $this->propertiesToRead = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -193,6 +198,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->name = $name;
 
+        return $this;
+    }
+
+    public function getPropertiesToRead()
+    {
+        return $this->propertiesToRead;
+    }
+
+    public function addPropertyToRead(Property $property): self
+    {
+        if (!$this->propertiesToRead->contains($property)) {
+            $this->propertiesToRead[] = $property;
+        }
+
+        return $this;
+    }
+
+    public function removePropertyToRead(Property $property): self
+    {
+        $this->propertiesToRead->removeElement($property);
         return $this;
     }
 }

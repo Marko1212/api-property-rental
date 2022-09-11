@@ -36,7 +36,7 @@ class PropertyRepositoryTest extends KernelTestCase
             ->getRepository(Property::class)
             ->getChosenPropertyNamesCreatedByAdmins();
 
-        $this->assertSame([['name' => 'Moja draga Apolinarija'], ['name' => 'Moja draga Olga']], $propertyNames);
+        $this->assertSame([['name' => 'Appartement meublé 4 pièces'], ['name' => 'Maison à louer 5 pièces']], $propertyNames);
     }
 
     protected function tearDown(): void

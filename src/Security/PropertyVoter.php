@@ -68,6 +68,10 @@ class PropertyVoter extends Voter
             return true;
         }
 
+        if ($this->security->isGranted('ROLE_AGENT') && $user->getPropertiesToRead()->contains($property)) {
+            return true;
+        }
+
         return false;
     }
 
