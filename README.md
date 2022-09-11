@@ -20,7 +20,7 @@ php bin/console doctrine:fixtures:load --no-interaction
 symfony server:start
 ```
 
-Ensuite, pour voir les endoints dans le navigateur, saisir l'URL:
+Ensuite, pour voir les endpoints dans le navigateur, saisir l'URL:
 
 ```bash
 http://localhost:8000/api
