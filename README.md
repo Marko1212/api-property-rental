@@ -8,7 +8,7 @@ PHP 8.1.1, Symfony 6.1.4, API Platform 2.6, MySQL 8.0
 
 ## Installation
 
-Pour démarrer le projet, il faut installer toutes les dépendances, configurer l'accès à la base de données, en précisant son URL dans le fichier .env, créer la base de données, exécuter les migrations, exécuter les fixtures et lancer le serveur.
+Pour démarrer le projet, après l'avoir téléchargé, il faut installer les dépendances, configurer l'accès à la base de données, en précisant son URL dans le fichier .env, créer la base de données, exécuter les migrations, exécuter les fixtures et lancer le serveur.
 
 Exécuter dans le dossier du projet les commandes suivantes:
 
@@ -20,7 +20,7 @@ php bin/console doctrine:fixtures:load --no-interaction
 symfony server:start
 ```
 
-Ensuite, pour voir les endpoints dans le navigateur, saisir l'URL:
+Ensuite, pour voir les endpoints, saisir dans la barre d'adresse du navigateur:
 
 ```bash
 http://localhost:8000/api
