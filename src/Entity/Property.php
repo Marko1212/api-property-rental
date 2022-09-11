@@ -36,7 +36,9 @@ use Symfony\Component\Validator\Constraints as Assert;
     'street' => 'ipartial',
     'name' => 'ipartial',
     'status' => 'iexact',
-    'creator.name' => 'ipartial'
+    'numberOfRooms' => 'exact',
+    'creator.name' => 'ipartial',
+    'creator.email' => 'ipartial',
 ])]
 #[ApiFilter(filterClass: OrderFilter::class, properties: ['city', 'name', 'price'])]
 #[ORM\Entity(repositoryClass: PropertyRepository::class)]
@@ -112,6 +114,7 @@ class Property extends AbstractTranslatable
     public function __construct()
     {
         $this->authorizedUsers = new ArrayCollection();
+        $this->translations = new ArrayCollection();
     }
 
     public function getId(): ?int
