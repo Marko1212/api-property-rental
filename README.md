@@ -10,6 +10,8 @@ PHP 8.1.1, Symfony 6.1.4, API Platform 2.6, MySQL 8.0
 
 Pour démarrer le projet, il faut installer toutes les dépendances, configurer l'accès à la base de données, en précisant son URL dans le fichier .env, créer la base de données, exécuter les migrations, exécuter les fixtures et lancer le serveur.
 
+Exécuter dans le dossier du projet les commandes suivantes:
+
 ```bash
 composer install
 php bin/console doctrine:database:create
@@ -18,7 +20,7 @@ php bin/console doctrine:fixtures:load --no-interaction
 symfony server:start
 ```
 
-Ensuite, on peut aller sur l'URL:
+Ensuite, pour voir les endoints, dans le navigateur, saisir l'URL:
 
 ```bash
 http://localhost:8000/api
