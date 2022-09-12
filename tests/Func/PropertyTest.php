@@ -67,7 +67,6 @@ class PropertyTest extends AbstractEndPoint
     {
         $response = $this->getResponseFromRequest(Request::METHOD_DELETE, '/api/properties/65');
         $responseContent = $response->getContent();
-        $responseDecoded = json_decode($responseContent);
 
         self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
     }
