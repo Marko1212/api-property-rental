@@ -27,7 +27,11 @@ use Symfony\Component\Validator\Constraints as Assert;
         'get',
         'put',
         'delete' => ['security' => 'is_granted("remove", object)']
-    ]
+    ],
+    subresourceOperations: ['properties_get_subresource' => ['openapi_context' => [
+        'summary'     => 'Retrieves the collection of Property resources.',
+        'description' => 'Retrieves the collection of Property resources.'
+    ]]]
 )]
 #[ApiFilter(filterClass: SearchFilter::class, properties: [
     'email' => 'ipartial',
