@@ -66,7 +66,6 @@ class PropertyTest extends AbstractEndPoint
     public function testDeleteProperty(): void
     {
         $response = $this->getResponseFromRequest(Request::METHOD_DELETE, '/api/properties/65');
-        $responseContent = $response->getContent();
 
         self::assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
     }
