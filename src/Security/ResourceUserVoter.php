@@ -44,7 +44,7 @@ class ResourceUserVoter extends Voter
     {
         if (
             $user !== $resourceUser &&
-            ($this->security->isGranted('ROLE_ADMIN') || $this->security->isGranted('ROLE_MANAGER'))
+            $this->security->isGranted('ROLE_ADMIN')
         ) {
             return true;
         }
