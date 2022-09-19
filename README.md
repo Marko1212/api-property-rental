@@ -8,7 +8,7 @@ PHP 8.1.1, Symfony 6.1.4, API Platform 2.6, MySQL 8.0
 
 ## Installation
 
-Pour démarrer le projet, après l'avoir téléchargé, il faut : installer les dépendances, configurer l'accès à la base de données (en précisant son URL dans le fichier .env), créer la base de données, exécuter les migrations afin de créer les tables dans cette BD, exécuter les fixtures pour remplir les tables avec des données. Enfin, il faut lancer le serveur.
+Pour démarrer le projet, après l'avoir téléchargé, il faut : installer les dépendances, configurer l'accès à la base de données (en précisant son URL dans le fichier .env), créer la base de données, exécuter les migrations afin de créer les tables dans cette BD, exécuter les fixtures pour remplir les tables avec des données. Enfin, il faut démarrer le serveur.
 
 Exécuter dans le dossier du projet les commandes suivantes:
 
